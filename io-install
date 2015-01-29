@@ -21,6 +21,8 @@ fi
 version="$1"
 version="${version//v/}"
 
+[ "$version" = "latest" ] && version="$(curl -fs https://iojs.org/dist/latest/ | grep iojs- | head -n1 | sed 's/.*iojs-v//' | sed 's/-.*//')"
+
 if [ "$version" == "" ]; then
   echo 'Usage: io-install version'
   echo ''
@@ -43,12 +45,17 @@ esac
 
 url="https://iojs.org/dist/v$version/iojs-v$version-$os-$arch.tar.gz"
 
-if [ "$os" = "darwin" ]; then
-  curl -fs $url | $SUDO_MAYBE tar xzPs '|^[^/]*/|/usr/local/|' --include '*/*/*'
+if curl -fsI "$url" > /dev/null 2>&1 ; then
+  if [ "$os" = "darwin" ]; then
+    curl -fs $url | $SUDO_MAYBE tar xzPs '|^[^/]*/|/usr/local/|' --include '*/*/*'
+  else
+    curl -fs $url | $SUDO_MAYBE tar xzP --xform 's|^[^/]*/|/usr/local/|' --wildcards '*/*/*'
+  fi
 else
-  curl -fs $url | $SUDO_MAYBE tar xzP --xform 's|^[^/]*/|/usr/local/|' --wildcards '*/*/*'
+  echo 'Unexisting io.js version.'
+  exit 1
 fi
 
-[ $? != 0 ] && exit 1
+[ $? != 0 ] && echo 'Could not install io.js' && exit 1
 
 echo iojs $(iojs -v) is now installed
