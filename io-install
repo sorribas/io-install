@@ -1,0 +1,54 @@
+#!/bin/bash
+
+[ ! -O /usr/local/bin ] && SUDO_MAYBE=sudo
+
+for opt in "$@"; do
+  case "$opt" in
+      --force)      force=true ;;
+      -f)           force=true ;;
+      --list)       list=true ;;
+      -l)           list=true ;;
+  esac
+done
+
+[ ! -d /usr/local/bin ] && [ "$force" != "" ] && echo "/usr/local/bin does not exist" && exit 1
+
+if [ "$list" = "true" ]; then
+  curl -fs https://iojs.org/download/release/index.tab | awk '{print $1}' | tail -n +2
+  exit 0
+fi
+
+version="$1"
+version="${version//v/}"
+
+if [ "$version" == "" ]; then
+  echo 'Usage: io-install version'
+  echo ''
+  echo '  version can also be "latest"'
+  echo '  list versions with --list'
+  echo ''
+  exit 0
+fi
+
+case "$(uname -a)" in
+  Linux*)  os=linux  ;;
+  Darwin*) os=darwin ;;
+  SunOS*)  os=sunos  ;;
+esac
+
+case "$(uname -a)" in
+  *raspberrypi*) arch=arm-pi ;;
+  *x86_64*)      arch=x64    ;;
+esac
+
+url="https://iojs.org/dist/v$version/iojs-v$version-$os-$arch.tar.gz"
+
+if [ "$os" = "darwin" ]; then
+  curl -fs $url | $SUDO_MAYBE tar xzPs '|^[^/]*/|/usr/local/|' --include '*/*/*'
+else
+  curl -fs $url | $SUDO_MAYBE tar xzP --xform 's|^[^/]*/|/usr/local/|' --wildcards '*/*/*'
+fi
+
+[ $? != 0 ] && exit 1
+
+echo iojs $(iojs -v) is now installed

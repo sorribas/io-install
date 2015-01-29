@@ -1,0 +1,11 @@
+{
+  "name": "io-install",
+  "version": "1.0.0",
+  "description": "Install me to install io.js",
+  "main": "io-install",
+  "author": "Eduardo Sorribas <eduardo@sorribas.org> (http://sorribas.org/)",
+  "bin": {
+    "io-install": "./io-install"
+  },
+  "license": "MIT"
+}
