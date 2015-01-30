@@ -20,6 +20,15 @@ Usage: io-install version
   list versions with --list
 ```
 
+No npm?
+-------
+
+No problem. Install the script running the following command on your shell.
+
+```
+curl -fs https://raw.githubusercontent.com/sorribas/io-install/master/install | sh
+```
+
 License
 -------
 
