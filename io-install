@@ -38,6 +38,8 @@ case "$(uname -a)" in
   SunOS*)  os=sunos  ;;
 esac
 
+arch=x86
+
 case "$(uname -a)" in
   *raspberrypi*) arch=arm-pi ;;
   *x86_64*)      arch=x64    ;;
