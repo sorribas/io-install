@@ -1,6 +1,6 @@
 {
   "name": "io-install",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Install me to install io.js",
   "main": "io-install",
   "author": "Eduardo Sorribas <eduardo@sorribas.org> (http://sorribas.org/)",
